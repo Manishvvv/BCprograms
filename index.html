@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solidity Contracts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #25006a;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        h1 {
+            color: aqua;
+
+        }
+
+        pre {
+            white-space: pre-wrap;
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .output-container {
+            background-color: #2d2d2d;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Blockchain Technology - I_Precticals</h1>
+
+    <h2>1. Hello World</h2>
+    <pre>
+        <code>
+// Contract code here...
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.6.12 <0.9.0;
+
+contract HelloWorld {
+  function print() public pure returns (string memory) {
+    return "Hello World!";
+  }
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>2. Increment and Decrement Counter</h2>
+    <pre>
+        <code>
+// Contract code here...
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Counter {
+    uint public count;
+
+    function get() public view returns (uint) {
+        return count;
+    }
+
+    function inc() public {
+        count += 1;
+    }
+
+    function dec() public {
+        count -= 1;
+    }
+}
+
+        </code>
+    </pre>
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>3. Calculator</h2>
+    <pre>
+        <code>
+// Contract code here...
+pragma solidity ^0.4.24;
+
+contract Calculator {
+    uint c;
+
+    function add(uint a, uint b) public {
+        c = a + b;
+    }
+
+    function sub(uint a, uint b) public {
+        c = a - b;
+    }
+
+    function mul(uint a, uint b) public {
+        c = a * b;
+    }
+
+    function div(uint a, uint b) public {
+        require(b > 0, "The second parameter should be larger than 0");
+        c = a / b;
+    }
+
+    function getResult() public view returns (uint x) {
+        return c;
+    }
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>4. Ether Wallet</h2>
+    <pre>
+        <code>
+// Contract code here...
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract EtherWallet {
+    address payable public owner;
+
+    constructor() {
+        owner = payable(msg.sender);
+    }
+
+    receive() external payable {}
+
+    function withdraw(uint _amount) external {
+        require(msg.sender == owner, "caller is not owner");
+        payable(msg.sender).transfer(_amount);
+    }
+
+    function getBalance() external view returns (uint) {
+        return address(this).balance;
+    }
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>5. Payment System</h2>
+    <pre>
+        <code>
+// Contract code here...
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract PaymentSystem {
+    address public owner;
+    mapping(address => uint256) public balances;
+
+    event PaymentReceived(address indexed from, uint256 amount);
+    event Withdrawal(address indexed to, uint256 amount);
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can call this function");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    receive() external payable {
+        balances[msg.sender] += msg.value;
+        emit PaymentReceived(msg.sender, msg.value);
+    }
+
+    function withdraw(uint256 amount) external onlyOwner {
+        require(amount <= address(this).balance, "Insufficient balance");
+        payable(owner).transfer(amount);
+        emit Withdrawal(owner, amount);
+    }
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>6. Hash</h2>
+    <pre>
+        <code>
+// Contract code here...
+pragma solidity ^0.5.0;
+
+contract Test {   
+   function callKeccak256() public pure returns(bytes32 result){
+      return keccak256("ABC");
+   }  
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>7. Voting System</h2>
+    <pre>
+        <code>
+// Contract code here...
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.7.0 <0.9.0;
+
+contract Ballot {
+    struct Voter {
+        uint weight;
+        bool voted;
+        address delegate;
+        uint vote;
+    }
+
+    struct Proposal {
+        bytes32 name;
+        uint voteCount;
+    }
+
+    address public chairperson;
+    mapping(address => Voter) public voters;
+    Proposal[] public proposals;
+
+    constructor(bytes32[] memory proposalNames) {
+        chairperson = msg.sender;
+        voters[chairperson].weight = 1;
+
+        for (uint i = 0; i < proposalNames.length; i++) {
+            proposals.push(Proposal({
+                name: proposalNames[i],
+                voteCount: 0
+            }));
+        }
+    }
+
+    function giveRightToVote(address voter) external {
+        require(msg.sender == chairperson, "Only chairperson can give right to vote.");
+        require(!voters[voter].voted, "The voter already voted.");
+        require(voters[voter].weight == 0);
+        voters[voter].weight = 1;
+    }
+
+    function delegate(address to) external {
+        Voter storage sender = voters[msg.sender];
+        require(sender.weight != 0, "You have no right to vote");
+        require(!sender.voted, "You already voted.");
+        require(to != msg.sender, "Self-delegation is disallowed.");
+
+        while (voters[to].delegate != address(0)) {
+            to = voters[to].delegate;
+            require(to != msg.sender, "Found loop in delegation.");
+        }
+
+        Voter storage delegate_ = voters[to];
+        require(delegate_.weight >= 1);
+
+        sender.voted = true;
+        sender.delegate = to;
+
+        if (delegate_.voted) {
+            proposals[delegate_.vote].voteCount += sender.weight;
+        } else {
+            delegate_.weight += sender.weight;
+        }
+    }
+
+    function vote(uint proposal) external {
+        Voter storage sender = voters[msg.sender];
+        require(sender.weight != 0, "Has no right to vote");
+        require(!sender.voted, "Already voted.");
+        sender.voted = true;
+        sender.vote = proposal;
+
+        proposals[proposal].voteCount += sender.weight;
+    }
+
+    function winningProposal() public view returns (uint winningProposal_) {
+        uint winningVoteCount = 0;
+        for (uint p = 0; p < proposals.length; p++) {
+            if (proposals[p].voteCount > winningVoteCount) {
+                winningVoteCount = proposals[p].voteCount;
+                winningProposal_ = p;
+            }
+        }
+    }
+
+    function winnerName() external view returns (bytes32 winnerName_) {
+        winnerName_ = proposals[winningProposal()].name;
+    }
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>8. Send Withdraw Money</h2>
+    <pre>
+        <code>
+// Contract code here...
+//SPDX-License-Identifier: MIT
+pragma solidity 0.8.16;
+
+contract SendWithdrawMoney {
+    uint public balanceReceived;
+
+    function deposit() public payable {
+        balanceReceived += msg.value;
+    }
+
+    function getContractBalance() public view returns(uint) {
+        return address(this).balance;
+    }
+
+    function withdrawAll() public {
+        address payable to = payable(msg.sender);
+        to.transfer(getContractBalance());
+    }
+
+    function withdrawToAddress(address payable to) public {
+        to.transfer(getContractBalance());
+    }
+}
+
+        </code>
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>9. MetaMask Setup</h2>
+    <pre>
+
+        <code>
+To set up a MetaMask wallet, follow these steps:
+
+1. Visit the MetaMask website (https://metamask.io/) and click on "Download."
+2. Install the MetaMask extension for your browser by clicking on "Install MetaMask for Chrome" (or any other browser you're using).
+3. After installation, you will be taken to a page to create a wallet or import an existing one. Choose "Create a Wallet."
+4. You can opt-out of analytics collection by selecting "No Thanks."
+5. Create a strong password for your wallet and click "Create."
+6. Watch the informational video about your key and Secret Backup Phrase.
+7. Click "Reveal Secret Words" to see your 12-word backup phrase. Write it down and store it securely. You can use a password manager for this.
+8. MetaMask will then ask you to confirm your backup phrase to ensure you have it saved.
+9. After backing up your phrase, you'll see some security tips. Save a backup in multiple places, never share your phrase, be cautious of phishing, and if you need to back up your phrase again, you can find it in the MetaMask settings under "Security."
+10. Now you have a wallet set up. To find your Ethereum address, open your wallet by clicking the fox icon in the top right corner. The address will be the letters and numbers starting with "0x" that you can copy and share with others.
+            
+
+        </code>
+    
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>10. Create an NFT on OpenSea</h2>
+    <pre>
+
+    <code>
+To create an NFT on OpenSea, follow these steps:
+
+1.First, make sure you have a wallet with some ETH. You can use MetaMask, Trust Wallet, or any other wallet that supports Ethereum.
+
+2.Visit the OpenSea website (https://opensea.io/) and sign up or log in using your wallet.
+
+3.Once you're logged in, click on "Create" in the top right corner.
+
+4.Choose "Create a new collection" or "Create a new item" if you want to add your NFT to an existing collection.
+
+5.Fill in the required information for your collection or item, such as the name, description, and image.
+
+6.For the "Contract address," you can either choose a pre-existing smart contract or create a new one. If you're creating a new smart contract, you'll need to write the code in Solidity and deploy it to the Ethereum blockchain.
+
+7.If you're creating a new item, you'll need to upload your digital asset (image, video, audio, etc.) to IPFS (InterPlanetary File System). You can use a service like Pinata (https://pinata.cloud/) to upload your file.
+
+8.After uploading your digital asset to IPFS, you'll receive a unique URL. Copy this URL and paste it into the "Token URI" field in OpenSea.
+
+9.Set the price for your NFT in ETH.
+
+10.Click "Create" to mint your NFT. This process may take a few minutes.
+
+11.Once your NFT is minted, you can view it on your OpenSea profile or in the collection you added it to.
+    </code>
+
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>11. TwinTower</h2>
+    <pre>
+
+    <code>
+// SPDX-License-Identifier: GPL-3.0
+// 10000000000000000000 wei = 10 eth
+
+pragma solidity ^0.8.0;
+
+contract TwinTower{
+
+    address payable public owner;
+    uint public totalFlats;
+    uint public flatPrice;
+    string public projectName;
+    uint public endTime;
+    uint public totalBuyers;
+    uint public soldFlats;
+    uint public votingEndTime;
+    uint public totalVote;
+    bool fundClamed;
+
+    struct BuyerDetails {
+        address payable buyerAddress;
+        uint totalAmountPaid;
+        uint amountRemaining;
+        bool fundClamed;
+    }
+
+    BuyerDetails[] public buyerDetails;        //Array to store buyer details
+    mapping(address=>uint) public buyerMap;
+    mapping(address=>bool) public voted;
+
+    event Message(string msg);
+
+    constructor(uint _totalFlats, uint _flatPrice, string memory _projectName, uint _endTime, uint _votingEndTime){
+        owner = payable(msg.sender);
+        endTime = block.timestamp + _endTime;
+        totalFlats = _totalFlats;
+        flatPrice = _flatPrice;
+        projectName = _projectName;
+        votingEndTime = block.timestamp + _votingEndTime;
+        buyerDetails.push();
+    }
+
+    function buyFlat() external payable {
+        require(block.timestamp < endTime, "Deadline has passed !!");
+        require(msg.sender != owner, "Onwer cannot buy flat !!");
+        require(buyerMap[msg.sender] == 0, "Only new buyers are allowed !!");
+        require(msg.value < flatPrice, "Please check the flat price !!");
+        require(msg.value > 0, "Minimum price to book is 1eth !!");
+        require(soldFlats<totalFlats, "All flats are sold !!");
+
+        BuyerDetails memory buyer = BuyerDetails({
+            buyerAddress: payable(msg.sender),
+            totalAmountPaid: msg.value,
+            amountRemaining: flatPrice - msg.value,
+            fundClamed: false
+        });
+
+        soldFlats++;
+        totalBuyers++;
+        buyerDetails.push(buyer);
+        buyerMap[msg.sender] = buyerDetails.length-1;
+        emit Message("Flat bought !!");
+    }
+
+    function getBuyerDetails() external view returns(BuyerDetails memory){
+        uint location = buyerMap[msg.sender];
+        return buyerDetails[location];
+    }
+
+    function depositFund() external payable {
+        require(block.timestamp < endTime, "Deadline has passed !!");
+        require(msg.sender != owner, "Onwer cannot buy flat !!");
+        require(buyerMap[msg.sender] != 0, "You are new buyer !!");
+
+        uint location = buyerMap[msg.sender];
+        BuyerDetails memory buyer = buyerDetails[location];
+
+        require(msg.value <= buyer.amountRemaining, "Please check the remaining amount !!");
+        require(msg.value > 0, "Minimum price to deposit is 1eth !!");
+        buyerDetails[location].totalAmountPaid = buyerDetails[location].totalAmountPaid + msg.value;
+        buyerDetails[location].amountRemaining = buyerDetails[location].amountRemaining - msg.value;
+
+        emit Message("Money deposited !!");
+    }
+
+    function getContractBalance() external view returns(uint) {
+        return address(this).balance;
+    }
+
+    function putVote() external {
+        require(msg.sender != owner, "Owner can not vote!!");
+        require(block.timestamp > endTime, "Project has not ended yet!!");
+        require(block.timestamp < votingEndTime,"Voting time has passed!!");
+        require(buyerMap[msg.sender] != 0, "You have not buyed flat!!");
+        require(voted[msg.sender] == false, "You have already voted!!");
+        totalVote++;
+        voted[msg.sender] = true;
+    }
+
+    function claimFundContractor() public{
+        require(fundClamed == false, "Fund is already claim!!");
+        require(msg.sender == owner, "Only Contracter can claim the funds!!");
+        require(block.timestamp > endTime,"Project not over yet!!");
+        require(block.timestamp > votingEndTime,"Voting time has not yet passed!!");
+        require(totalVote > totalBuyers/2, "Majority does not support hence you cannot claim" );
+        uint amount = address(this).balance;
+        fundClamed = true;
+        owner.transfer(amount);
+    }
+
+    function claimFundUser() public{
+        require(buyerMap[msg.sender] != 0, "You have not buyed flat!!");
+        require(msg.sender != owner, "Only Contracter can claim the funds!!");
+        require(block.timestamp > endTime,"Project not over yet!!");
+        require(block.timestamp > votingEndTime,"Voting time has not yet passed!!");
+        require(totalVote < totalBuyers/2, "Majority supports contractor hence you cannot claim" );
+        uint location = buyerMap[msg.sender];
+        require(buyerDetails[location].fundClamed == false,"Funds already claimed !!");
+
+        uint amount = buyerDetails[location].totalAmountPaid;
+        buyerDetails[location].totalAmountPaid = 0;
+        buyerDetails[location].fundClamed = true;
+        address payable buyer = buyerDetails[location].buyerAddress;
+        buyer.transfer(amount);
+    }
+
+
+}
+    </code>
+
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>12. FundRaising</h2>
+    <pre>
+
+    <code>
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.8.0;
+
+contract FundRaising{
+
+    address payable public owner;
+    uint public totalFundReq;
+    uint public totalFundRaised;
+    uint public totalDonar;
+    uint public totalVote;
+    uint public votingEndTime;
+    uint remainingFund;
+    uint public endTime;
+    uint totalAsk=1;
+    bool fundClamed;
+    bool public votingStatus;
+
+    mapping(address=>uint) public donars;
+    mapping(address=>bool) public voted;
+
+    constructor(uint _totalFundReq, uint _endTime){
+        owner = payable(msg.sender);
+        endTime = block.timestamp + _endTime;
+        totalFundReq = _totalFundReq;
+    }
+
+    function sendFund() external payable {
+        require(block.timestamp < endTime, "Deadline has passed !!");
+        require(msg.sender != owner, "School cannot participate in fund raising!!");
+        require(msg.value > 0, "Minimum contribution is 1");
+
+        // check for new contributor
+        if(donars[msg.sender] == 0){
+            totalDonar++;
+        }
+        donars[msg.sender] = donars[msg.sender] + msg.value;
+        totalFundRaised = totalFundRaised + msg.value;
+    }
+
+    function getContractBalance() external view returns(uint) {
+        return address(this).balance;
+    }
+
+    function startVoting(uint _votingEndTime) external {
+        require(msg.sender == owner, "Only School can start voting");
+        require(block.timestamp > endTime, "Deadline has not passed yet!!");
+        votingEndTime = block.timestamp + _votingEndTime;
+        votingStatus = true;
+    }
+
+    function putVote() external {
+        require(votingStatus == true, "Voting has not started yet!!");
+        require(block.timestamp < votingEndTime,"Voting time has passed!!");
+        require(donars[msg.sender] != 0, "You are not allowed to participate as you have not cotributed!!");
+        require(voted[msg.sender] == false, "You have already voted!!");
+        totalVote++;
+        voted[msg.sender] = true;
+    }
+
+    function claimFund() public{
+        require(fundClamed == false, "Fund is already claim!!");
+        require(msg.sender == owner, "Only School can claim the funds!!");
+        require(block.timestamp > endTime,"Crowdfunding not over yet!!");
+
+        if(totalAsk == 1){
+            uint transferAmt = totalFundRaised / 10;  //sending 10% of total fund raised; 
+            remainingFund = totalFundRaised-transferAmt;
+            totalAsk++;
+            owner.transfer(transferAmt);
+        }else{
+            require(block.timestamp > votingEndTime,"Voting time has not yet passed!!");
+            require(totalVote > totalDonar/2, "Majority does not support" );
+            fundClamed = true;
+            uint transferAmt = remainingFund;
+            remainingFund =0;
+            owner.transfer(transferAmt);
+        }
+        
+    }
+
+
+}   </code>
+
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+    <h2>13. BloodBank</h2>
+    <pre>
+
+    <code>
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.8.0;
+
+contract BloodBank {
+    // set the owner of the contract
+    address owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    // Used for defining PatientType
+    enum PatientType {
+        Donor,
+        Receiver
+    }
+
+    // Used to storing blood txn
+    struct BloodTransaction {
+        PatientType patientType;
+        uint256 time;
+        address from;
+        address to;
+    }
+
+    // Used for storing single Patient records
+    struct Patient {
+        uint256 aadhar;
+        string name;
+        uint256 age;
+        string bloodGroup;
+        uint256 contact;
+        string homeAddress;
+        BloodTransaction[] bT;
+    }
+
+    // Array to store all the patientRecord
+    // Array is used so that all the patientRecord can be fetched at once
+    Patient[] PatientRecord;
+
+    // map is used to map the addhar card with the index number of the array where patient record is stored
+    // this will prevent the use of loop in contract
+    mapping(uint256 => uint256) PatientRecordIndex;
+
+    // used for notifying if function is executed or not
+    event Successfull(string message);
+
+    // Register a new patient
+    function newPatient(
+        string memory _name,
+        uint256 _age,
+        string memory _bloodGroup,
+        uint256 _contact,
+        string memory _homeAddress,
+        uint256 _aadhar
+    ) external {
+        // Since patient can be only registered by the hospital hence its required to check if the sender
+        // is owner or not
+        require(msg.sender == owner, "only admin can register new patient");
+
+        // get the legth of array
+        uint256 index = PatientRecord.length;
+
+        // insert records
+        PatientRecord.push();
+        PatientRecord[index].name = _name;
+        PatientRecord[index].age = _age;
+        PatientRecord[index].bloodGroup = _bloodGroup;
+        PatientRecord[index].contact = _contact;
+        PatientRecord[index].homeAddress = _homeAddress;
+        PatientRecord[index].aadhar = _aadhar;
+
+        // store the aaray index in the map against the user addhar number
+        PatientRecordIndex[_aadhar] = index;
+
+        emit Successfull("Patient added successfully");
+    }
+
+    // function to get specific user data
+    function getPatientRecord(uint256 _aadhar)
+        external
+        view
+        returns (Patient memory)
+    {
+        uint256 index = PatientRecordIndex[_aadhar];
+        return PatientRecord[index];
+    }
+
+    // function to get all the records
+    function getAllRecord() external view returns (Patient[] memory) {
+        return PatientRecord;
+    }
+
+    // store the blood txn
+    function bloodTransaction(
+        uint256 _aadhar,
+        PatientType _type,
+        address _from,
+        address _to
+    ) external {
+        // check if sender is hospital or not
+        require(
+            msg.sender == owner,
+            "only hospital can update the patient's blood transaction data"
+        );
+
+        // get at which index the patient registartion details are saved
+        uint256 index = PatientRecordIndex[_aadhar];
+
+        //insert the BloodTransaction in the record
+        BloodTransaction memory txObj = BloodTransaction({
+            patientType: _type,
+            time: block.timestamp,
+            from: _from,
+            to: _to
+        });
+
+        PatientRecord[index].bT.push(txObj);
+
+        // Note: above statement can also be written like below statement;
+        // PatientRecord[index].bT.push(BloodTransaction(_type, block.timestamp,_from,_to));
+
+        emit Successfull(
+            "Patient blood transaction data is updated successfully"
+        );
+    }
+}   </code>
+
+    </pre>
+
+    <div class="output-container">
+        <h2>Output</h2>
+
+        <code>
+                // Output here...
+            </code>
+
+    </div>
+
+
+
+
+    
+
+</body>
+
+</html>
